@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 
 	int opt = 0;
 	int argslot = -1;
-	while (-1 != (opt = getopt_long(argc, argv, "dfvhc:k:m:o:ip:e:b:n:s:z:ql:w:", options, &argslot)))
+	while (-1 != (opt = getopt_long(argc, argv, "dfvhc:k:m:o:ip:e:b:n:z:ql:w:s:", options, &argslot)))
 	{
 		switch (opt)
 		{
