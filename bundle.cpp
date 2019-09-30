@@ -453,7 +453,7 @@ void ZAppBundle::GetPlugIns(const string &strFolder, vector<string> &arrPlugIns)
 	}
 }
 
-bool ZAppBundle::SignFolder(ZSignAsset *pSignAsset, const string &strFolder, const string &strBundleID, const string &strDisplayName, const string &strDyLibFile, bool bForce, bool bWeakInject, bool bEnableCache)
+bool ZAppBundle::SignFolder(ZSignAsset *pSignAsset, const string &strFolder, const string &strBundleID, const string &strDisplayName, const string &strDyLibFile, bool bForce, bool bWeakInject, bool bEnableCache,const string &strVersion)
 {
 	m_bForceSign = bForce;
 	m_pSignAsset = pSignAsset;
@@ -531,6 +531,11 @@ bool ZAppBundle::SignFolder(ZSignAsset *pSignAsset, const string &strFolder, con
 				jvInfoPlist["CFBundleName"] = strDisplayName;
 				jvInfoPlist["CFBundleDisplayName"] = strDisplayName;
 				ZLog::PrintV(">>> BundleName: %s -> %s\n", strOldDispalyName.c_str(), strDisplayName.c_str());
+			}
+			if(!strVersion.empty()){
+				string strOldShotVersion = jvInfoPlist["CFBundleShortVersionString"];
+				jvInfoPlist["CFBundleShortVersionString"] = strVersion;
+				ZLog::PrintV(">>> ShortVersion: %s -> %s\n", strOldShotVersion.c_str(), strVersion.c_str());
 			}
 
 			jvInfoPlist.writePListPath("%s/Info.plist", m_strAppFolder.c_str());

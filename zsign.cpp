@@ -25,6 +25,7 @@ const struct option options[] = {
 	{ "install",		no_argument,			NULL, 'i' },
 	{ "quiet",			no_argument,			NULL, 'q' },
 	{ "help",			no_argument,			NULL, 'h' },
+	{ "newversion",		no_argument,			NULL, 's' },
 	{ }
 };
 
@@ -48,6 +49,7 @@ int usage()
 	ZLog::Print("-i, --install\t\tInstall ipa file using ideviceinstaller command for test.\n");
 	ZLog::Print("-q, --quiet\t\tQuiet operation.\n");
 	ZLog::Print("-v, --version\t\tShow version.\n");
+	ZLog::Print("-s, --newversion\t\tnew version.\n");
 	ZLog::Print("-h, --help\t\tShow help.\n");
 
 	return -1;
@@ -71,6 +73,7 @@ int main(int argc, char *argv[])
 	string strOutputFile;
 	string strDisplayName;
 	string strEntitlementsFile;
+	string strVersion;
 
 	int opt = 0;
 	int argslot = -1;
@@ -102,6 +105,8 @@ int main(int argc, char *argv[])
 		case 'n':
 			strDisplayName = optarg;
 			break;
+		case 's':
+			strVersion = optarg
 		case 'e':
 			strEntitlementsFile = optarg;
 			break;
@@ -210,7 +215,7 @@ int main(int argc, char *argv[])
 
 	timer.Reset();
 	ZAppBundle bundle;
-	bool bRet = bundle.SignFolder(&zSignAsset, strFolder, strBundleId, strDisplayName, strDyLibFile, bForce, bWeakInject, bEnableCache);
+	bool bRet = bundle.SignFolder(&zSignAsset, strFolder, strBundleId, strDisplayName, strDyLibFile, bForce, bWeakInject, bEnableCache,strVersion);
 	timer.PrintResult(bRet, ">>> Signed %s!", bRet ? "OK" : "Failed");
 
 	if (bInstall && strOutputFile.empty())
