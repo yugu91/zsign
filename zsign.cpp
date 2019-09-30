@@ -25,13 +25,13 @@ const struct option options[] = {
 	{ "install",		no_argument,			NULL, 'i' },
 	{ "quiet",			no_argument,			NULL, 'q' },
 	{ "help",			no_argument,			NULL, 'h' },
-	{ "newversion",		no_argument,			NULL, 's' },
+	{ "newversion",		required_argument,		NULL, 's' },
 	{ }
 };
 
 int usage()
 {
-	ZLog::Print("Usage: zsign [-options] [-k privkey.pem] [-m dev.prov] [-o output.ipa] file|folder\n");
+	ZLog::Print("Usage: zsign [-options] [-k privkey.pem] [-m dev.prov] [-o output.ipa] [-s newversion] file|folder\n");
 	ZLog::Print("options:\n");
 	ZLog::Print("-k, --pkey\t\tPath to private key or p12 file. (PEM or DER format)\n");
 	ZLog::Print("-m, --prov\t\tPath to mobile provisioning profile.\n");
@@ -57,6 +57,9 @@ int usage()
 
 int main(int argc, char *argv[])
 {
+	for(int i=0;i<argc;i++)
+		cout<<"Argument "<<i<<" is "<<argv[i]<<endl;
+
 	ZTimer gtimer;
 
 	bool bForce = false;
@@ -77,7 +80,7 @@ int main(int argc, char *argv[])
 
 	int opt = 0;
 	int argslot = -1;
-	while (-1 != (opt = getopt_long(argc, argv, "dfvhc:k:m:o:ip:e:b:n:z:ql:w", options, &argslot)))
+	while (-1 != (opt = getopt_long(argc, argv, "dfvhc:k:m:o:ip:e:b:n:s:z:ql:w:", options, &argslot)))
 	{
 		switch (opt)
 		{
@@ -106,7 +109,7 @@ int main(int argc, char *argv[])
 			strDisplayName = optarg;
 			break;
 		case 's':
-			strVersion = optarg
+			strVersion = optarg;
 		case 'e':
 			strEntitlementsFile = optarg;
 			break;
