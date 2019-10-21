@@ -3,3 +3,4 @@ zsign
 *.dSYM
 *.ipa
 .zsign*
+.DS_Store
