@@ -1,0 +1,33 @@
+Set Windows Application User Model ID (AUMID) { appUserModelId: 'org.whispersystems.signal-desktop' }
+NODE_ENV production
+NODE_CONFIG_DIR /Applications/Signal.app/Contents/Resources/app.asar/config
+NODE_CONFIG {}
+ALLOW_CONFIG_MUTATIONS undefined
+HOSTNAME undefined
+NODE_APP_INSTANCE undefined
+SUPPRESS_NO_CONFIG_WARNING undefined
+userData: /Users/zhongyi/Library/Application Support/Signal
+config/get: Successfully read user config file
+config/get: Successfully read ephemeral config file
+Set Windows Application User Model ID (AUMID) { appUserModelId: 'org.whispersystems.signal-desktop' }
+NODE_ENV production
+NODE_CONFIG_DIR /Applications/Signal.app/Contents/Resources/app.asar/config
+NODE_CONFIG {}
+ALLOW_CONFIG_MUTATIONS undefined
+HOSTNAME undefined
+NODE_APP_INSTANCE undefined
+SUPPRESS_NO_CONFIG_WARNING undefined
+userData: /Users/zhongyi/Library/Application Support/Signal
+config/get: Successfully read user config file
+config/get: Successfully read ephemeral config file
+Set Windows Application User Model ID (AUMID) { appUserModelId: 'org.whispersystems.signal-desktop' }
+NODE_ENV production
+NODE_CONFIG_DIR /Applications/Signal.app/Contents/Resources/app.asar/config
+NODE_CONFIG {}
+ALLOW_CONFIG_MUTATIONS undefined
+HOSTNAME undefined
+NODE_APP_INSTANCE undefined
+SUPPRESS_NO_CONFIG_WARNING undefined
+userData: /Users/zhongyi/Library/Application Support/Signal
+config/get: Successfully read user config file
+config/get: Successfully read ephemeral config file

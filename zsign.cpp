@@ -49,7 +49,8 @@ int usage()
 	ZLog::Print("-i, --install\t\tInstall ipa file using ideviceinstaller command for test.\n");
 	ZLog::Print("-q, --quiet\t\tQuiet operation.\n");
 	ZLog::Print("-v, --version\t\tShow version.\n");
-	ZLog::Print("-s, --newversion\t\tnew version.\n");
+	ZLog::Print("-s, --newversion\tnew version.\n");
+	ZLog::Print("-u, --custominfo\tEdit info.plist key to value, Value format example:key_value\n");
 	ZLog::Print("-h, --help\t\tShow help.\n");
 
 	return -1;
@@ -77,10 +78,11 @@ int main(int argc, char *argv[])
 	string strDisplayName;
 	string strEntitlementsFile;
 	string strVersion;
+	string strCustomInfoValue;
 
 	int opt = 0;
 	int argslot = -1;
-	while (-1 != (opt = getopt_long(argc, argv, "dfvhc:k:m:o:ip:e:b:n:z:ql:w:s:", options, &argslot)))
+	while (-1 != (opt = getopt_long(argc, argv, "dfvhc:k:m:o:ip:e:b:n:z:ql:w:u:s:", options, &argslot)))
 	{
 		switch (opt)
 		{
@@ -130,6 +132,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'q':
 			ZLog::SetLogLever(ZLog::E_NONE);
+			break;
+		case 'u':
+			strCustomInfoValue = optarg;
 			break;
 		case 'v':
 		{
@@ -218,7 +223,7 @@ int main(int argc, char *argv[])
 
 	timer.Reset();
 	ZAppBundle bundle;
-	bool bRet = bundle.SignFolder(&zSignAsset, strFolder, strBundleId, strDisplayName, strDyLibFile, bForce, bWeakInject, bEnableCache,strVersion);
+	bool bRet = bundle.SignFolder(&zSignAsset, strFolder, strBundleId, strDisplayName, strDyLibFile, bForce, bWeakInject, bEnableCache,strVersion,strCustomInfoValue);
 	timer.PrintResult(bRet, ">>> Signed %s!", bRet ? "OK" : "Failed");
 
 	if (bInstall && strOutputFile.empty())
