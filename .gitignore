@@ -3,4 +3,8 @@ zsign
 *.dSYM
 *.ipa
 .zsign*
+
 .DS_Store
+
+.xmake
+build
