@@ -31,7 +31,7 @@ bool SlotParseRequirements(uint8_t *pSlotBase, CS_BlobIndex *pbi)
 	if(IsFileExists("/usr/bin/csreq"))
 	{
 		string strTempFile;
-		StringFormat(strTempFile, "/tmp/Requirements_%llu.blob", GetMicroSencond());
+		StringFormat(strTempFile, "/tmp/Requirements_%llu.blob", GetMicroSecond());
 		WriteFile(strTempFile.c_str(), (const char *)pSlotBase, uSlotLength);
 
 		string strCommand;
@@ -297,7 +297,7 @@ bool SlotBuildCodeDirectory(
 		return false;
 	}
 
-	uint32_t uVersion = 0x20200;
+	uint32_t uVersion = 0x20400;
 
 	CS_CodeDirectory cdHeader;
 	memset(&cdHeader, 0, sizeof(cdHeader));
