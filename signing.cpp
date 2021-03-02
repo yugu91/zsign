@@ -31,7 +31,7 @@ bool SlotParseRequirements(uint8_t *pSlotBase, CS_BlobIndex *pbi)
 	if(IsFileExists("/usr/bin/csreq"))
 	{
 		string strTempFile;
-		StringFormat(strTempFile, "/tmp/Requirements_%llu.blob", GetMicroSencond());
+		StringFormat(strTempFile, "/tmp/Requirements_%llu.blob", GetMicroSecond());
 		WriteFile(strTempFile.c_str(), (const char *)pSlotBase, uSlotLength);
 
 		string strCommand;
@@ -283,6 +283,8 @@ bool SlotBuildCodeDirectory(
 	uint32_t uCodeLength,
 	uint8_t *pCodeSlotsData,
 	uint32_t uCodeSlotsDataLength,
+	size_t execSegLimit,
+	uint64_t execSegFlags,
 	const string &strBundleId,
 	const string &strTeamId,
 	const string &strInfoPlistSHA,
@@ -297,7 +299,7 @@ bool SlotBuildCodeDirectory(
 		return false;
 	}
 
-	uint32_t uVersion = 0x20200;
+	uint32_t uVersion = 0x20400;
 
 	CS_CodeDirectory cdHeader;
 	memset(&cdHeader, 0, sizeof(cdHeader));
@@ -317,6 +319,9 @@ bool SlotBuildCodeDirectory(
 	cdHeader.spare2 = 0;
 	cdHeader.scatterOffset = 0;
 	cdHeader.teamOffset = 0;
+	cdHeader.execSegBase = _Swap(uint64_t(0));
+	cdHeader.execSegLimit = _Swap(uint64_t(execSegLimit));
+	cdHeader.execSegFlags = _Swap(execSegFlags);
 
 	string strEmptySHA;
 	strEmptySHA.append(cdHeader.hashSize, 0);

@@ -5,3 +5,5 @@ zsign
 .zsign*
 
 .DS_Store
+.xmake
+build

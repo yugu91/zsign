@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
 
 	if (bInstall && strOutputFile.empty())
 	{
-		StringFormat(strOutputFile, "/tmp/zsign_temp_%llu.ipa", GetMicroSencond());
+		StringFormat(strOutputFile, "/tmp/zsign_temp_%llu.ipa", GetMicroSecond());
 	}
 
 	if (!strOutputFile.empty())
@@ -239,11 +239,6 @@ int main(int argc, char *argv[])
 		{
 			ZLog::Error(">>> Can't Find Payload Directory!\n");
 			return -1;
-		}
-
-		if (!IsPathSuffix(strOutputFile, ".ipa"))
-		{
-			strOutputFile += ".ipa";
 		}
 
 		ZLog::PrintV(">>> Archiving: \t%s ... \n", strOutputFile.c_str());

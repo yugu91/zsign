@@ -1,6 +1,9 @@
 #include "bundle.h"
 #include "macho.h"
+#include "sys/stat.h"
+#include "sys/types.h"
 #include "common/base64.h"
+#include "common/common.h"
 
 ZAppBundle::ZAppBundle()
 {
@@ -9,9 +12,11 @@ ZAppBundle::ZAppBundle()
 	m_bWeakInject = false;
 }
 
+
+
 bool ZAppBundle::FindAppFolder(const string &strFolder, string &strAppFolder)
 {
-	if (IsPathSuffix(strFolder, ".app"))
+	if (IsPathSuffix(strFolder, ".app") || IsPathSuffix(strFolder, ".appex"))
 	{
 		strAppFolder = strFolder;
 		return true;
@@ -23,7 +28,7 @@ bool ZAppBundle::FindAppFolder(const string &strFolder, string &strAppFolder)
 		dirent *ptr = readdir(dir);
 		while (NULL != ptr)
 		{
-			if (0 != strcmp(ptr->d_name, ".") && 0 != strcmp(ptr->d_name, ".."))
+			if (0 != strcmp(ptr->d_name, ".") && 0 != strcmp(ptr->d_name, "..") && 0 != strcmp(ptr->d_name, "__MACOSX"))
 			{
 				if (DT_DIR == ptr->d_type)
 				{
@@ -93,7 +98,7 @@ bool ZAppBundle::GetObjectsToSign(const string &strFolder, JValue &jvInfo)
 				string strNode = strFolder + "/" + ptr->d_name;
 				if (DT_DIR == ptr->d_type)
 				{
-					if (IsPathSuffix(strNode, ".app") || IsPathSuffix(strNode, ".appex") || IsPathSuffix(strNode, ".framework"))
+					if (IsPathSuffix(strNode, ".app") || IsPathSuffix(strNode, ".appex") || IsPathSuffix(strNode, ".framework") || IsPathSuffix(strNode, ".xctest"))
 					{
 						JValue jvNode;
 						jvNode["path"] = strNode.substr(m_strAppFolder.size() + 1);

@@ -29,6 +29,12 @@ using namespace std;
 #define LE(x) _Swap(x)
 #define BE(x) _Swap(x)
 
+
+#if !defined(S_ISREG) && defined(S_IFMT) && defined(S_IFREG)
+#define S_ISREG(m) (((m) & S_IFMT) == S_IFREG)
+#endif
+
+
 uint16_t _Swap(uint16_t value);
 uint32_t _Swap(uint32_t value);
 uint64_t _Swap(uint64_t value);
@@ -42,7 +48,7 @@ bool WriteFile(const char *szData, size_t sLen, const char *szFormatPath, ...);
 bool AppendFile(const char *szFile, const string &strData);
 bool AppendFile(const char *szFile, const char *szData, size_t sLen);
 bool AppendFile(const string &strData, const char *szFormatPath, ...);
-
+bool IsRegularFile(const char *szFile);
 bool IsFolder(const char *szFolder);
 bool IsFolderV(const char *szFormatPath, ...);
 bool CreateFolder(const char *szFolder);
@@ -68,7 +74,7 @@ void StringSplit(const string &src, const string &split, vector<string> &dest);
 
 string FormatSize(int64_t size, int64_t base = 1024);
 time_t GetUnixStamp();
-uint64_t GetMicroSencond();
+uint64_t GetMicroSecond();
 bool SystemExec(const char *szFormatCmd, ...);
 uint32_t ByteAlign(uint32_t uValue, uint32_t uAlign);
 
