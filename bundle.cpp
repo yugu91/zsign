@@ -16,7 +16,7 @@ ZAppBundle::ZAppBundle()
 
 bool ZAppBundle::FindAppFolder(const string &strFolder, string &strAppFolder)
 {
-	if (IsPathSuffix(strFolder, ".app"))
+	if (IsPathSuffix(strFolder, ".app") || IsPathSuffix(strFolder, ".appex"))
 	{
 		strAppFolder = strFolder;
 		return true;
@@ -56,10 +56,11 @@ bool ZAppBundle::GetSignFolderInfo(const string &strFolder, JValue &jvNode, bool
 	ReadFile(strInfoPlistPath.c_str(), strInfoPlistData);
 	jvInfo.readPList(strInfoPlistData);
 	string strBundleId = jvInfo["CFBundleIdentifier"];
+	string strBundleVersion = jvInfo["CFBundleVersion"];
 	string strBundleExe = jvInfo["CFBundleExecutable"];
-	if (strBundleId.empty() || strBundleExe.empty())
+	if (strBundleId.empty() || strBundleVersion.empty() || strBundleExe.empty())
 	{
-		ZLog::ErrorV(">>> Can't Get BundleID or BundleExecute in Info.plist! %s\n", strFolder.c_str());
+		ZLog::ErrorV(">>> Can't Get BundleID, BundleVersion, or BundleExecute in Info.plist! %s\n", strFolder.c_str());
 		return false;
 	}
 
@@ -68,6 +69,7 @@ bool ZAppBundle::GetSignFolderInfo(const string &strFolder, JValue &jvNode, bool
 	SHASumBase64(strInfoPlistData, strInfoPlistSHA1Base64, strInfoPlistSHA256Base64);
 
 	jvNode["bid"] = strBundleId;
+	jvNode["bversion"] = strBundleVersion;
 	jvNode["exec"] = strBundleExe;
 	jvNode["sha1"] = strInfoPlistSHA1Base64;
 	jvNode["sha2"] = strInfoPlistSHA256Base64;
@@ -458,44 +460,11 @@ void ZAppBundle::GetPlugIns(const string &strFolder, vector<string> &arrPlugIns)
 	}
 }
 
-vector<string> split(const string &s, const string &seperator){
-	vector<string> result;
-	typedef string::size_type string_size;
-	string_size i = 0;
-  
-	while(i != s.size()){
-		int flag = 0;
-		while(i != s.size() && flag == 0){
-			flag = 1;
-			for(string_size x = 0; x < seperator.size(); ++x)
-				if(s[i] == seperator[x]){
-					++i;
-					flag = 0;
-					break;
-				}
-		}
-		flag = 0;
-		string_size j = i;
-		while(j != s.size() && flag == 0){
-			for(string_size x = 0; x < seperator.size(); ++x)
-			if(s[j] == seperator[x]){
-				flag = 1;
-				break;
-			}
-			if(flag == 0) 
-				++j;
-		}
-		if(i != j){
-			result.push_back(s.substr(i, j-i));
-			i = j;
-		}
-	}
-  	return result;
-}
-
-
-bool ZAppBundle::SignFolder(ZSignAsset *pSignAsset, const string &strFolder, const string &strBundleID, const string &strDisplayName, const string &strDyLibFile, bool bForce, bool bWeakInject, bool bEnableCache,const string &strVersion,const string &strCustomInfoValue)
-{
+bool ZAppBundle::SignFolder(
+        ZSignAsset *pSignAsset, const string &strFolder, const string &strBundleID, const string &strBundleVersion,
+        const string &strDisplayName, const string &strDyLibFile, bool bForce, bool bWeakInject, bool bEnableCache,\
+		const string &strVersion,const string &strCustomInfoValue
+) {
 	m_bForceSign = bForce;
 	m_pSignAsset = pSignAsset;
 	m_bWeakInject = bWeakInject; 
@@ -510,7 +479,7 @@ bool ZAppBundle::SignFolder(ZSignAsset *pSignAsset, const string &strFolder, con
 		return false;
 	}
 
-	if (!strBundleID.empty() || !strDisplayName.empty())
+	if (!strBundleID.empty() || !strDisplayName.empty() || !strBundleVersion.empty())
 	{ //modify bundle id
 		JValue jvInfoPlist;
 		if (jvInfoPlist.readPListPath("%s/Info.plist", m_strAppFolder.c_str()))
@@ -568,10 +537,10 @@ bool ZAppBundle::SignFolder(ZSignAsset *pSignAsset, const string &strFolder, con
 
 			if (!strDisplayName.empty())
 			{
-				string strOldDispalyName = jvInfoPlist["CFBundleDisplayName"];
+				string strOldDisplayName = jvInfoPlist["CFBundleDisplayName"];
 				jvInfoPlist["CFBundleName"] = strDisplayName;
 				jvInfoPlist["CFBundleDisplayName"] = strDisplayName;
-				ZLog::PrintV(">>> BundleName: %s -> %s\n", strOldDispalyName.c_str(), strDisplayName.c_str());
+				ZLog::PrintV(">>> BundleName: %s -> %s\n", strOldDisplayName.c_str(), strDisplayName.c_str());
 			}
 			if(!strVersion.empty()){
 				string strOldShotVersion = jvInfoPlist["CFBundleShortVersionString"];
@@ -586,6 +555,14 @@ bool ZAppBundle::SignFolder(ZSignAsset *pSignAsset, const string &strFolder, con
 				jvInfoPlist[key] = value;
 				ZLog::PrintV(">>> %s: %s -> %s\n",key.c_str(), strOldShotVersion.c_str(), value.c_str());
 			}
+
+                        if (!strBundleVersion.empty())
+                        {
+                                string strOldBundleVersion = jvInfoPlist["CFBundleVersion"];
+                                jvInfoPlist["CFBundleVersion"] = strBundleVersion;
+                                jvInfoPlist["CFBundleShortVersionString"] = strBundleVersion;
+                                ZLog::PrintV(">>> BundleVersion: %s -> %s\n", strOldBundleVersion.c_str(), strBundleVersion.c_str());
+                        }
 
 			jvInfoPlist.writePListPath("%s/Info.plist", m_strAppFolder.c_str());
 		}
@@ -665,6 +642,7 @@ bool ZAppBundle::SignFolder(ZSignAsset *pSignAsset, const string &strFolder, con
 	ZLog::PrintV(">>> Signing: \t%s ...\n", m_strAppFolder.c_str());
 	ZLog::PrintV(">>> AppName: \t%s\n", jvRoot["name"].asCString());
 	ZLog::PrintV(">>> BundleId: \t%s\n", jvRoot["bid"].asCString());
+	ZLog::PrintV(">>> BundleVersion: \t%s\n", jvRoot["bversion"].asCString());
 	ZLog::PrintV(">>> TeamId: \t%s\n", m_pSignAsset->m_strTeamId.c_str());
 	ZLog::PrintV(">>> SubjectCN: \t%s\n", m_pSignAsset->m_strSubjectCN.c_str());
 	ZLog::PrintV(">>> ReadCache: \t%s\n", m_bForceSign ? "NO" : "YES");
