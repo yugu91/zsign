@@ -462,7 +462,7 @@ void ZAppBundle::GetPlugIns(const string &strFolder, vector<string> &arrPlugIns)
 
 bool ZAppBundle::SignFolder(
         ZSignAsset *pSignAsset, const string &strFolder, const string &strBundleID, const string &strBundleVersion,
-        const string &strDisplayName, const string &strDyLibFile, bool bForce, bool bWeakInject, bool bEnableCache,\
+        const string &strDisplayName, const string &strDyLibFile, bool bForce, bool bWeakInject, bool bEnableCache,
 		const string &strVersion,const string &strCustomInfoValue
 ) {
 	m_bForceSign = bForce;
